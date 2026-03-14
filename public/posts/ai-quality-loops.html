@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Quality Loops That Actually Prevent Regressions — Adrian’s Lab Notes</title>
+    <meta name="description" content="A practical loop for shipping AI features faster without breaking quality every release." />
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-93WD6911S1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied'
+      });
+      gtag('js', new Date());
+      gtag('config', 'G-93WD6911S1');
+
+      const consent = localStorage.getItem('adrian_blog_consent_v1');
+      gtag('consent', 'update', {
+        analytics_storage: consent === 'granted' ? 'granted' : 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied'
+      });
+    </script>
+
+    <style>
+      body { margin: 0; background: #000; color: #eaeaea; font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+      main { max-width: 700px; margin: 64px auto; padding: 0 20px 60px; }
+      h1 { margin: 0 0 8px; font-size: 2rem; font-weight: 600; }
+      h2 { margin-top: 28px; font-size: 1.2rem; color: #f5f5f5; }
+      .meta { color: #8f8f8f; margin-bottom: 26px; }
+      a { color: #eaeaea; text-decoration: none; border-bottom: 1px solid #444; }
+      a:hover { border-color: #999; }
+      p, li { color: #d0d0d0; }
+      ul { margin: 0 0 18px 20px; }
+      code { background: #111; padding: 2px 6px; border-radius: 6px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a href="/">← Back</a>
+      <h1>AI Quality Loops That Actually Prevent Regressions</h1>
+      <div class="meta">Mar 2026</div>
+
+      <p>Most teams ship AI features with good intentions and then lose quality two releases later. The fix is not “more prompts”. It is a tight quality loop with hard gates.</p>
+
+      <h2>1) Define failure modes before you ship</h2>
+      <p>Write down the top 5 ways the feature can fail in production (hallucination, wrong schema, unsafe wording, latency spikes, etc). If you can’t name failure modes, you can’t prevent regressions.</p>
+
+      <h2>2) Map each failure mode to a measurable eval</h2>
+      <p>Each risk needs an eval with a score and threshold. Keep it brutally simple at first:</p>
+      <ul>
+        <li><code>factuality_pass_rate >= 92%</code></li>
+        <li><code>schema_validity >= 99%</code></li>
+        <li><code>p95_latency <= 2.0s</code></li>
+      </ul>
+
+      <h2>3) Gate release on eval + runtime telemetry</h2>
+      <p>CI checks pre-release quality. Runtime telemetry catches post-release drift. You need both. This is where most teams miss: they only test offline and skip live signals.</p>
+
+      <h2>4) Run rollback like a feature, not a panic move</h2>
+      <p>Rollback should be one command with known blast radius and clear ownership. If rollback takes debate, your quality loop is incomplete.</p>
+
+      <h2>What changed for me after applying this loop</h2>
+      <ul>
+        <li>Faster releases because guardrails removed decision anxiety</li>
+        <li>Fewer “works in staging, fails in prod” incidents</li>
+        <li>Cleaner postmortems because every failure mode already had an owner</li>
+      </ul>
+
+      <p>Small loops beat large frameworks. Start with 3 evals, 3 dashboards, and one reliable rollback path. Then iterate.</p>
+    </main>
+  </body>
+</html>
